@@ -7,9 +7,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
-    origin: 'http://localhost:3000', // 허용할 클라이언트 주소
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
+    origin: ['http://localhost:3000', 'https://localhost:3000'], // 허용할 클라이언트 주소
     credentials: true, // 쿠키 포함 여부 (프론트엔드와 백엔드가 다를 때 필요)
   });
 
