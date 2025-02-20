@@ -28,7 +28,7 @@ export class UserService {
   async create(createUserInput: CreateUserInput): Promise<User> {
     const { address } = createUserInput;
 
-    this.logger.log(`새로운 사용자 생성: ${address}`);
+    this.logger.log(`address: ${address}`);
 
     const existingUser = await this.userModel.findOne({ address }).exec();
     if (existingUser) {

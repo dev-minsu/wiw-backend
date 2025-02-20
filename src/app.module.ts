@@ -1,19 +1,22 @@
-import { ApolloDriver, ApolloFederationDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { DirectiveLocation, GraphQLDirective } from 'graphql';
-import { upperDirectiveTransformer } from './common/directives/upper-case.directive';
-import { join } from 'path';
-import {UsersModule} from "./chats/infra/user.module";
+import {ApolloDriver, ApolloDriverConfig} from '@nestjs/apollo';
+import {Module} from '@nestjs/common';
+import {GraphQLModule} from '@nestjs/graphql';
+import {DirectiveLocation, GraphQLDirective} from 'graphql';
+import {upperDirectiveTransformer} from './common/directives/upper-case.directive';
+import {join} from 'path';
+import {UserModule} from "./chats/infra/user.module";
 import {MongooseModule} from "@nestjs/mongoose";
 import {ConfigModule, ConfigService} from "@nestjs/config";
+import {GameModule} from "./chats/infra/game.module";
 
 @Module({
   imports: [
-    UsersModule,
+    UserModule,
+    GameModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
       playground: true,
       introspection: true,
       transformSchema: schema => upperDirectiveTransformer(schema, 'upper'),

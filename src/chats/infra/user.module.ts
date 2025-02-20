@@ -11,4 +11,4 @@ import {User, UserSchema} from "../domain/models/user.model";
   providers: [UserResolver, UserService],
   exports: [UserService],
 })
-export class UsersModule {}
+export class UserModule {}

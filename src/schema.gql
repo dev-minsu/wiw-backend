@@ -4,15 +4,16 @@
 
 directive @upper on FIELD_DEFINITION
 
-"""User"""
-type User {
-  id: ID!
-  name: String
+input CreateGameInput {
+  defaultBettingAmount: Float!
+  limit: Int!
+  name: String!
+  ownerUserAddress: String!
+  topic: String!
+}
+
+input CreateUserInput {
   address: String!
-  signature: String
-  avatar: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 """
@@ -20,14 +21,37 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Query {
-  findUserByAddress(address: String!): User
+"""Game"""
+type Game {
+  bettingTokenDenom: String!
+  createdAt: DateTime!
+  defaultBettingAmount: Float!
+  id: ID!
+  limit: Int!
+  name: String!
+  ownerUserAddress: String!
+  topic: String!
+  updatedAt: DateTime!
+  userAddresses: [String!]!
 }
 
 type Mutation {
+  createGame(createGameInput: CreateGameInput!): Game!
   createUser(createUserInput: CreateUserInput!): User!
 }
 
-input CreateUserInput {
+type Query {
+  findUserByAddress(address: String!): User
+  getGames: [Game!]!
+}
+
+"""User"""
+type User {
   address: String!
+  avatar: String
+  createdAt: DateTime!
+  id: ID!
+  name: String
+  signature: String
+  updatedAt: DateTime!
 }

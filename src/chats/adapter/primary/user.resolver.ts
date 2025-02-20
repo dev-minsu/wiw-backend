@@ -7,16 +7,10 @@ import {UserService} from "../../application/services/user.service";
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-
   @Query(() => User, { nullable: true })
   async findUserByAddress(@Args('address') address: string): Promise<User | null> {
     return this.userService.findUserByAddress(address);
   }
-
-  // @Query(() => [User])
-  // async getUsers(): Promise<User[]> {
-  //   return this.userService.findAll()
-  // }
 
   @Mutation(() => User)
   async createUser(
