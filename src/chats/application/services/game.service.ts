@@ -18,14 +18,9 @@ export class GameService {
     return createdUser.save();
   }
 
-  async findAll(): Promise<Game[]> {
-    try {
-      const games = await this.gameModel.find().exec();
-      this.logger.log(`게임 목록 조회 성공 (총 ${games.length}개)`);
-      return games;
-    } catch (error) {
-      this.logger.error(`게임 목록 조회 실패: ${error.message}`);
-      throw new Error("게임 목록을 불러오는 중 오류가 발생했습니다.");
-    }
+  async getGamesByOwnerAddress(address: string): Promise<Game[]> {
+    const games = await this.gameModel.find({ ownerUserAddress: address }).exec();
+    this.logger.log(`Found ${games.length} games for user address: ${address}`);
+    return games;
   }
 }

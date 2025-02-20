@@ -16,7 +16,7 @@ export class GameResolver {
   }
 
   @Query(() => [Game])
-  async getGames(): Promise<Game[]> {
-    return this.gameService.findAll();
+  async getGamesByOwnerAddress(@Args('userAddress') address: string): Promise<Game[]> {
+    return this.gameService.getGamesByOwnerAddress(address);
   }
 }

@@ -42,7 +42,7 @@ type Mutation {
 
 type Query {
   findUserByAddress(address: String!): User
-  getGames: [Game!]!
+  getGamesByOwnerAddress(userAddress: String!): [Game!]!
 }
 
 """User"""
