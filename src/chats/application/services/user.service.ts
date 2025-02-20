@@ -1,8 +1,10 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import {User, UserDocument} from "../../domain/models/user.model";
 import {CreateUserInput} from "../../domain/dto/create-user.input";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
+import {Args} from "@nestjs/graphql";
+
 
 
 const AVATAR_URLS = [
@@ -20,12 +22,26 @@ const AVATAR_URLS = [
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserInput: CreateUserInput): Promise<User> {
+    const { address } = createUserInput;
+
+    this.logger.log(`새로운 사용자 생성: ${address}`);
+
+    const existingUser = await this.userModel.findOne({ address }).exec();
+    if (existingUser) {
+      return existingUser;
+    }
+
     const avatar = AVATAR_URLS[Math.floor(Math.random() * AVATAR_URLS.length)];
     const createdUser = new this.userModel({ ...createUserInput, avatar });
     return createdUser.save();
+  }
+
+  async findUserByAddress(address: string): Promise<User | null> {
+    return this.userModel.findOne({ address }).exec();
   }
 
   async findAll(): Promise<User[]> {
