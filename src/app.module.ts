@@ -8,11 +8,13 @@ import {UserModule} from "./chats/infra/user.module";
 import {MongooseModule} from "@nestjs/mongoose";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {GameModule} from "./chats/infra/game.module";
+import {MessageModule} from "./chats/infra/message.module";
 
 @Module({
   imports: [
     UserModule,
     GameModule,
+    MessageModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),

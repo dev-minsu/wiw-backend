@@ -3,6 +3,8 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Game, GameDocument} from "../../domain/models/game.model";
 import {CreateGameInput} from "../../domain/dto/create-game.input";
+import {Parent, ResolveField} from "@nestjs/graphql";
+import {Message} from "../../domain/models/message.model";
 
 @Injectable()
 export class GameService {

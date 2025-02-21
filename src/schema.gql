@@ -28,6 +28,7 @@ type Game {
   defaultBettingAmount: Float!
   id: ID!
   limit: Int!
+  messages: [Message!]!
   name: String!
   ownerUserAddress: String!
   topic: String!
@@ -35,14 +36,31 @@ type Game {
   userAddresses: [String!]!
 }
 
+"""Message"""
+type Message {
+  content: String!
+  createdAt: DateTime!
+  gameId: ID!
+  id: ID!
+  messageType: String!
+  sender: ID!
+  updatedAt: DateTime!
+}
+
 type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
   createUser(createUserInput: CreateUserInput!): User!
+  sendMessage(content: String!, gameId: String!, messageType: String!, sender: String!): Message!
 }
 
 type Query {
   findUserByAddress(address: String!): User
   getGamesByOwnerAddress(userAddress: String!): [Game!]!
+  getMessagesByGame(gameId: String!): [Message!]!
+}
+
+type Subscription {
+  newMessage(gameId: String!): Message!
 }
 
 """User"""

@@ -5,7 +5,7 @@ import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 export type GameDocument = Game & Document;
 
 @ObjectType({ description: 'Game' })
-@Schema({ timestamps: true })      // Mongoose 스키마 데코레이터
+@Schema({ timestamps: true })
 export class Game {
   @Field(() => ID)
   id: string;
