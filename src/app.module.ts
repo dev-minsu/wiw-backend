@@ -31,6 +31,9 @@ import {MessageModule} from "./chats/infra/message.module";
           }),
         ],
       },
+      subscriptions: {
+        'graphql-ws': true,  
+      },
     }),
     ConfigModule.forRoot({
       isGlobal: true,
