@@ -33,9 +33,11 @@
     "graphql": "16.8.1",
     "graphql-query-complexity": "0.12.0",
     "graphql-subscriptions": "2.0.0",
+    "graphql-ws": "^6.0.4",
     "mongoose": "^8.10.1",
     "reflect-metadata": "0.2.1",
-    "rxjs": "7.8.1"
+    "rxjs": "7.8.1",
+    "subscriptions-transport-ws": "^0.11.0"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.2",

@@ -14,22 +14,28 @@ export class MessageService {
   constructor(@InjectModel(Message.name) private messageModel: Model<MessageDocument>) {}
 
   async sendMessage(gameId: string, sender: string, content: string, messageType: string): Promise<Message> {
-    const message = new this.messageModel({ gameId, sender, content, messageType });
-    const savedMessage = await message.save();
+    try {
+      if (!gameId || !sender || !content) {
+        throw new Error('gameId, sender, content is required!!!');
+      }
 
-    this.logger.log(`게임 ${gameId}에서 새 메시지: ${content}`);
+      const message = new this.messageModel({ gameId, sender, content, messageType });
+      const savedMessage = await message.save();
 
-    // GraphQL Subscription을 통해 메시지를 브로드캐스트
-    this.pubSub.publish(`GAME_CHAT_${gameId}`, { newMessage: savedMessage });
+      this.logger.log(savedMessage);
+      await this.pubSub.publish(`${gameId}`, {newMessage: savedMessage});
 
-    return savedMessage;
+      return savedMessage;
+    } catch (error) {
+      console.error(`sendMessage error: ${error.message}`);
+      throw new Error('sendMessage failed');
+    }
   }
 
   async getMessagesByGame(gameId: string): Promise<Message[]> {
     return this.messageModel.find({ gameId }).sort({ createdAt: 1 }).exec();
   }
 
-  // 🔹 GraphQL Subscription을 위한 PubSub 인스턴스 반환
   getPubSub() {
     return this.pubSub;
   }

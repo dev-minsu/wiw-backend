@@ -40,10 +40,10 @@ type Game {
 type Message {
   content: String!
   createdAt: DateTime!
-  gameId: ID!
+  gameId: String!
   id: ID!
   messageType: String!
-  sender: ID!
+  sender: String!
   updatedAt: DateTime!
 }
 

@@ -7,9 +7,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://localhost:3000'],
+    origin: '*', // ✅ 모든 도메인에서 요청 허용
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+
 
   await app.listen(8000);
   console.log(`Application is running on: ${await app.getUrl()}`);

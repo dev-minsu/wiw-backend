@@ -11,13 +11,13 @@ export class Message {
   @Field(() => ID)
   id: string;
 
-  @Field(() => ID)
-  @Prop({ type: { type: Types.ObjectId, ref: 'Game' }}) // Mongoose 관계 설정
-  gameId: Types.ObjectId;
+  @Field(() => String)
+  @Prop()
+  gameId: string;
 
-  @Field(() => ID)
-  @Prop({ type: { type: Types.ObjectId, ref: 'User' }}) // Mongoose 관계 설정
-  sender: string
+  @Field(() => String)
+  @Prop()
+  sender: string;
 
   @Field(() => String)
   @Prop()

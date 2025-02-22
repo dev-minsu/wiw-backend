@@ -32,6 +32,6 @@ export class MessageResolver {
     filter: (payload, variables) => payload.newMessage.gameId === variables.gameId,
   })
   newMessage(@Args('gameId') gameId: string) {
-    return this.pubSub.asyncIterator(`GAME_CHAT_${gameId}`);
+    return this.pubSub.asyncIterator(`${gameId}`);
   }
 }
