@@ -1,5 +1,6 @@
 import {Field, ID, Int, ObjectType} from '@nestjs/graphql';
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
+import {User} from "./user.model";
 
 
 export type GameDocument = Game & Document;
@@ -22,13 +23,23 @@ export class Game {
   @Prop()
   bettingTokenDenom: string
 
-  @Field(() => [String])
+  // @Prop({ type: [String], default: [] })
+  // userIds: string[];
+  //
+  // @Prop()
+  // ownerUserId: string
+
+  @Prop()
+  ownerAddress: string
+
   @Prop({ type: [String], default: [] })
   userAddresses: string[];
 
-  @Field(() => String)
-  @Prop()
-  ownerUserAddress: string
+  @Field(() => User, { nullable: true })
+  owner?: User;
+
+  @Field(() => [User], { nullable: true })
+  users?: User[];
 
   @Field(() => String)
   @Prop()
@@ -39,10 +50,10 @@ export class Game {
   topic: string
 
   @Field(() => Date)
-  readonly createdAt: Date;
+  readonly createdAt?: Date;
 
   @Field(() => Date)
-  readonly updatedAt: Date;
+  readonly updatedAt?: Date;
 }
 
 export const GameSchema = SchemaFactory.createForClass(Game);

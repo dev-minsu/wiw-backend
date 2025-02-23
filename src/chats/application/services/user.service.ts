@@ -40,11 +40,23 @@ export class UserService {
     return createdUser.save();
   }
 
+  async findAll(): Promise<User[]> {
+    return this.userModel.find().exec();
+  }
+
+  async findById(userId: string): Promise<User | null> {
+    return this.userModel.findById(userId).exec();
+  }
+
+  async findByIds(userIds: string[]): Promise<User[]> {
+    return this.userModel.find({ _id: { $in: userIds } }).exec();
+  }
+
   async findUserByAddress(address: string): Promise<User | null> {
     return this.userModel.findOne({ address }).exec();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+  async findUsersByAddresses(addresses: string[]): Promise<User[] | null> {
+    return this.userModel.find({ address: { $in: addresses } }).exec();
   }
 }

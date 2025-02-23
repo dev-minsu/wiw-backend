@@ -15,5 +15,5 @@ export class CreateGameInput {
   topic: string;
 
   @Field(() => String)
-  ownerUserAddress: string;
+  ownerAddress: string;
 }

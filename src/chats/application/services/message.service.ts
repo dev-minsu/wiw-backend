@@ -1,25 +1,23 @@
-import {Injectable, Logger} from "@nestjs/common";
+import {HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Message, MessageDocument} from "../../domain/models/message.model";
-import {CreateMessageInput} from "../../domain/dto/create-message.input";
-import { PubSub } from 'graphql-subscriptions';
+import {PubSub} from 'graphql-subscriptions';
 
 @Injectable()
 export class MessageService {
   private readonly logger = new Logger(MessageService.name);
-  private pubSub = new PubSub(); // 실시간 메시지 전송을 위한 PubSub
+  private pubSub = new PubSub();
 
 
   constructor(@InjectModel(Message.name) private messageModel: Model<MessageDocument>) {}
 
-  async sendMessage(gameId: string, sender: string, content: string, messageType: string): Promise<Message> {
+  async sendMessage(gameId: string, senderAddress: string, content: string, messageType: string): Promise<Message> {
+    if (!gameId || !senderAddress || !content) {
+      throw new HttpException('gameId, senderAddress, content is required!!!', HttpStatus.BAD_REQUEST);
+    }
     try {
-      if (!gameId || !sender || !content) {
-        throw new Error('gameId, sender, content is required!!!');
-      }
-
-      const message = new this.messageModel({ gameId, sender, content, messageType });
+      const message = new this.messageModel({ gameId, senderAddress, content, messageType });
       const savedMessage = await message.save();
 
       this.logger.log(savedMessage);
@@ -27,7 +25,6 @@ export class MessageService {
 
       return savedMessage;
     } catch (error) {
-      console.error(`sendMessage error: ${error.message}`);
       throw new Error('sendMessage failed');
     }
   }

@@ -5,10 +5,11 @@ import {User} from "../../domain/models/user.model";
 import {CreateGameInput} from "../../domain/dto/create-game.input";
 import {Message} from "../../domain/models/message.model";
 import {MessageService} from "../../application/services/message.service";
+import {UserService} from "../../application/services/user.service";
 
 @Resolver(() => Game)
 export class GameResolver {
-  constructor(private readonly gameService: GameService, private readonly messageService: MessageService) {}
+  constructor(private readonly gameService: GameService, private readonly messageService: MessageService, private readonly userService: UserService) {}
 
   @Mutation(() => Game)
   async createGame(
@@ -17,13 +18,33 @@ export class GameResolver {
     return this.gameService.create(createGameInput);
   }
 
+  @Mutation(() => Game)
+  async joinGame(@Args('userAddress') address: string, @Args('gameId') gameId: string): Promise<Game> {
+    return this.gameService.joinGame(address, gameId)
+  }
+
   @Query(() => [Game])
-  async getGamesByOwnerAddress(@Args('userAddress') address: string): Promise<Game[]> {
-    return this.gameService.getGamesByOwnerAddress(address);
+  async getJoinedGames(@Args('userAddress') address: string): Promise<Game[]> {
+    return this.gameService.getJoinedGames(address);
+  }
+
+  @Query(() => [Game])
+  async getGamesByOwnerAddress(@Args('ownerAddress') ownerAddress: string): Promise<Game[]> {
+    return this.gameService.getGamesByOwnerAddress(ownerAddress);
   }
 
   @ResolveField('messages', () => [Message])
   async getMessages(@Parent() game: Game) {
     return this.messageService.getMessagesByGame(game.id);
+  }
+
+  @ResolveField('owner', () => User, { nullable: true })
+  async getOwner(@Parent() game: Game): Promise<User | null> {
+    return this.userService.findUserByAddress(game.ownerAddress);
+  }
+
+  @ResolveField('users', () => [User], { nullable: true })
+  async getUsers(@Parent() game: Game): Promise<User[]> {
+    return this.userService.findUsersByAddresses(game.userAddresses);
   }
 }

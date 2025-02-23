@@ -1,6 +1,7 @@
 import {Field, ID, Int, ObjectType} from '@nestjs/graphql';
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 import {Types} from "mongoose";
+import {User} from "./user.model";
 
 
 export type MessageDocument = Message & Document;
@@ -11,13 +12,14 @@ export class Message {
   @Field(() => ID)
   id: string;
 
-  @Field(() => String)
   @Prop()
   gameId: string;
 
-  @Field(() => String)
   @Prop()
-  sender: string;
+  senderAddress: string;
+
+  @Field(() => User, { nullable: true })
+  sender?: User;
 
   @Field(() => String)
   @Prop()
@@ -28,10 +30,10 @@ export class Message {
   messageType: string
 
   @Field(() => Date)
-  readonly createdAt: Date;
+  readonly createdAt?: Date;
 
   @Field(() => Date)
-  readonly updatedAt: Date;
+  readonly updatedAt?: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

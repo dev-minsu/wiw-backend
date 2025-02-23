@@ -1,15 +1,16 @@
 import {Args, Mutation, Parent, Query, ResolveField, Resolver, Subscription} from '@nestjs/graphql';
 import {Message} from "../../domain/models/message.model";
-import {CreateMessageInput} from "../../domain/dto/create-message.input";
 import {MessageService} from "../../application/services/message.service";
 import {PubSub} from "graphql-subscriptions";
+import {UserService} from "../../application/services/user.service";
+import {User} from "../../domain/models/user.model";
 import {Game} from "../../domain/models/game.model";
 
 @Resolver(() => Message)
 export class MessageResolver {
   private pubSub: PubSub;
 
-  constructor(private readonly messageService: MessageService) {
+  constructor(private readonly messageService: MessageService, private readonly userService: UserService) {
     this.pubSub = this.messageService.getPubSub(); // PubSub 인스턴스를 가져옴
   }
 
@@ -21,11 +22,11 @@ export class MessageResolver {
   @Mutation(() => Message)
   async sendMessage(
     @Args('gameId') gameId: string,
-    @Args('sender') sender: string,
+    @Args('senderAddress') senderAddress: string,
     @Args('content') content: string,
     @Args('messageType') messageType: string,
   ): Promise<Message> {
-    return this.messageService.sendMessage(gameId, sender, content, messageType);
+    return this.messageService.sendMessage(gameId, senderAddress, content, messageType);
   }
 
   @Subscription(() => Message, {
@@ -33,5 +34,10 @@ export class MessageResolver {
   })
   newMessage(@Args('gameId') gameId: string) {
     return this.pubSub.asyncIterator(`${gameId}`);
+  }
+
+  @ResolveField('sender', () => User, { nullable: true })
+  async getSender(@Parent() message: Message): Promise<User | null> {
+    return this.userService.findUserByAddress(message.senderAddress);
   }
 }

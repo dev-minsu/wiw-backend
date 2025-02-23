@@ -30,10 +30,10 @@ export class User {
   avatar?: string;
 
   @Field(() => Date)
-  readonly createdAt: Date;
+  readonly createdAt?: Date;
 
   @Field(() => Date)
-  readonly updatedAt: Date;
+  readonly updatedAt?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

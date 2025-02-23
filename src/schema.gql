@@ -8,7 +8,7 @@ input CreateGameInput {
   defaultBettingAmount: Float!
   limit: Int!
   name: String!
-  ownerUserAddress: String!
+  ownerAddress: String!
   topic: String!
 }
 
@@ -24,38 +24,43 @@ scalar DateTime
 """Game"""
 type Game {
   bettingTokenDenom: String!
-  createdAt: DateTime!
+  createdAt: DateTime
   defaultBettingAmount: Float!
   id: ID!
   limit: Int!
   messages: [Message!]!
   name: String!
-  ownerUserAddress: String!
+  owner: User
+  ownerAddress: String!
   topic: String!
-  updatedAt: DateTime!
+  updatedAt: DateTime
   userAddresses: [String!]!
+  users: [User!]
 }
 
 """Message"""
 type Message {
   content: String!
-  createdAt: DateTime!
+  createdAt: DateTime
   gameId: String!
   id: ID!
   messageType: String!
-  sender: String!
-  updatedAt: DateTime!
+  sender: User
+  senderAddress: String!
+  updatedAt: DateTime
 }
 
 type Mutation {
   createGame(createGameInput: CreateGameInput!): Game!
   createUser(createUserInput: CreateUserInput!): User!
-  sendMessage(content: String!, gameId: String!, messageType: String!, sender: String!): Message!
+  joinGame(gameId: String!, userAddress: String!): Game!
+  sendMessage(content: String!, gameId: String!, messageType: String!, senderAddress: String!): Message!
 }
 
 type Query {
   findUserByAddress(address: String!): User
-  getGamesByOwnerAddress(userAddress: String!): [Game!]!
+  getGamesByOwnerAddress(ownerAddress: String!): [Game!]!
+  getJoinedGames(userAddress: String!): [Game!]!
   getMessagesByGame(gameId: String!): [Message!]!
 }
 
@@ -67,9 +72,9 @@ type Subscription {
 type User {
   address: String!
   avatar: String
-  createdAt: DateTime!
+  createdAt: DateTime
   id: ID!
   name: String
   signature: String
-  updatedAt: DateTime!
+  updatedAt: DateTime
 }
