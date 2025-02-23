@@ -6,6 +6,7 @@ import {CreateGameInput} from "../../domain/dto/create-game.input";
 import {Message} from "../../domain/models/message.model";
 import {MessageService} from "../../application/services/message.service";
 import {UserService} from "../../application/services/user.service";
+import {NotFoundException} from "@nestjs/common";
 
 @Resolver(() => Game)
 export class GameResolver {
@@ -26,6 +27,16 @@ export class GameResolver {
   @Query(() => [Game])
   async getJoinedGames(@Args('userAddress') address: string): Promise<Game[]> {
     return this.gameService.getJoinedGames(address);
+  }
+
+  @Query(() => Boolean)
+  async isJoinedGame(@Args('userAddress') address: string, @Args('gameId') gameId: string): Promise<boolean> {
+    // 해당 게임을 가져옴
+    const game = await this.gameService.findGameById(gameId);
+    if (!game) {
+      throw new NotFoundException(`Game with ID ${gameId} not found`);
+    }
+    return game.userAddresses.includes(address);
   }
 
   @Query(() => [Game])

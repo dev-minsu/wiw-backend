@@ -4,18 +4,28 @@ import {MessageService} from "../../application/services/message.service";
 import {PubSub} from "graphql-subscriptions";
 import {UserService} from "../../application/services/user.service";
 import {User} from "../../domain/models/user.model";
-import {Game} from "../../domain/models/game.model";
+import {GameService} from "../../application/services/game.service";
+import {NotFoundException} from "@nestjs/common";
 
 @Resolver(() => Message)
 export class MessageResolver {
   private pubSub: PubSub;
 
-  constructor(private readonly messageService: MessageService, private readonly userService: UserService) {
+  constructor(private readonly messageService: MessageService, private readonly userService: UserService, private readonly gameService: GameService) {
     this.pubSub = this.messageService.getPubSub(); // PubSub 인스턴스를 가져옴
   }
 
   @Query(() => [Message])
-  async getMessagesByGame(@Args('gameId') gameId: string): Promise<Message[]> {
+  async getMessagesByGame(@Args('gameId') gameId: string, @Args('userAddress') userAddress: string): Promise<Message[]> {
+    const game = await this.gameService.findGameById(gameId);
+    if (!game) {
+      throw new NotFoundException(`Game with ID ${gameId} not found`);
+    }
+
+    if (!game.userAddresses.includes(userAddress)) {
+      throw new NotFoundException(`User with address ${userAddress} is not part of this game`);
+    }
+
     return this.messageService.getMessagesByGame(gameId);
   }
 
@@ -26,7 +36,7 @@ export class MessageResolver {
     @Args('content') content: string,
     @Args('messageType') messageType: string,
   ): Promise<Message> {
-    return this.messageService.sendMessage(gameId, senderAddress, content, messageType);
+    return this.gameService.sendMessage(gameId, senderAddress, content, messageType);
   }
 
   @Subscription(() => Message, {

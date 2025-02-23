@@ -61,7 +61,8 @@ type Query {
   findUserByAddress(address: String!): User
   getGamesByOwnerAddress(ownerAddress: String!): [Game!]!
   getJoinedGames(userAddress: String!): [Game!]!
-  getMessagesByGame(gameId: String!): [Message!]!
+  getMessagesByGame(gameId: String!, userAddress: String!): [Message!]!
+  isJoinedGame(gameId: String!, userAddress: String!): Boolean!
 }
 
 type Subscription {

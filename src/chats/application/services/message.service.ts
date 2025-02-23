@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
+import {BadRequestException, HttpException, HttpStatus, Injectable, Logger} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Message, MessageDocument} from "../../domain/models/message.model";
@@ -14,7 +14,7 @@ export class MessageService {
 
   async sendMessage(gameId: string, senderAddress: string, content: string, messageType: string): Promise<Message> {
     if (!gameId || !senderAddress || !content) {
-      throw new HttpException('gameId, senderAddress, content is required!!!', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('gameId, senderAddress, content is required!!!');
     }
     try {
       const message = new this.messageModel({ gameId, senderAddress, content, messageType });
