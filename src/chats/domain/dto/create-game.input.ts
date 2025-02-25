@@ -16,4 +16,10 @@ export class CreateGameInput {
 
   @Field(() => String)
   ownerAddress: string;
+
+  @Field(() => String)
+  firstAiAgentId: string;
+
+  @Field(() => String)
+  secondAiAgentId: string;
 }

@@ -9,12 +9,16 @@ import {MongooseModule} from "@nestjs/mongoose";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {GameModule} from "./chats/infra/game.module";
 import {MessageModule} from "./chats/infra/message.module";
+import {AiAgentModule} from "./chats/infra/aiagent.module";
+import {BettingModule} from "./chats/infra/betting.module";
 
 @Module({
   imports: [
     UserModule,
-    GameModule,
     MessageModule,
+    AiAgentModule,
+    BettingModule,
+    GameModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -31,12 +35,6 @@ import {MessageModule} from "./chats/infra/message.module";
           }),
         ],
       },
-      // subscriptions: {
-      //   'graphql-ws': true
-      // },
-      // subscriptions: {
-      //   'graphql-ws': true,
-      // },
     }),
     ConfigModule.forRoot({
       isGlobal: true,

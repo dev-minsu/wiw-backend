@@ -4,11 +4,48 @@
 
 directive @upper on FIELD_DEFINITION
 
+"""Betting"""
+type AiAgent {
+  address: String!
+  context: String!
+  createdAt: DateTime
+  id: ID!
+  name: String!
+  updatedAt: DateTime
+}
+
+"""Betting"""
+type Betting {
+  bettingAmount: Float!
+  bettingTokenDenom: String!
+  createdAt: DateTime
+  id: ID!
+  ownerAddress: String!
+  predictionWinnerAiAgent: AiAgent!
+  predictionWinnerAiAgentId: String!
+  result: String!
+  updatedAt: DateTime
+}
+
+input CreateAiAgentInput {
+  address: String!
+  context: String!
+  name: String!
+}
+
+input CreateBettingInput {
+  bettingAmount: Float!
+  ownerAddress: String!
+  predictionWinnerAiAgentId: String!
+}
+
 input CreateGameInput {
   defaultBettingAmount: Float!
+  firstAiAgentId: String!
   limit: Int!
   name: String!
   ownerAddress: String!
+  secondAiAgentId: String!
   topic: String!
 }
 
@@ -23,7 +60,11 @@ scalar DateTime
 
 """Game"""
 type Game {
+  aiAgentIds: [String!]
+  aiAgents: [AiAgent!]
+  bettingIds: [String!]
   bettingTokenDenom: String!
+  bettings: [Betting!]
   createdAt: DateTime
   defaultBettingAmount: Float!
   id: ID!
@@ -36,6 +77,13 @@ type Game {
   updatedAt: DateTime
   userAddresses: [String!]!
   users: [User!]
+  winnerAiAgentId: String
+}
+
+"""GameEvent"""
+type GameEvent {
+  event: String
+  game: Game
 }
 
 """Message"""
@@ -51,14 +99,20 @@ type Message {
 }
 
 type Mutation {
+  broadcastEvent(event: String!, gameId: String!): Boolean!
+  createAiAgent(createAiAgentInput: CreateAiAgentInput!): AiAgent!
+  createBetting(createBettingInput: CreateBettingInput!, gameId: String!): Betting!
   createGame(createGameInput: CreateGameInput!): Game!
   createUser(createUserInput: CreateUserInput!): User!
   joinGame(gameId: String!, userAddress: String!): Game!
   sendMessage(content: String!, gameId: String!, messageType: String!, senderAddress: String!): Message!
+  updateAiAgent(aiAgentId: String!, updateAiAgentInput: UpdateAiAgentInput!): AiAgent!
 }
 
 type Query {
   findUserByAddress(address: String!): User
+  getAllAiAgent: [AiAgent!]!
+  getGameById(id: String!): Game!
   getGamesByOwnerAddress(ownerAddress: String!): [Game!]!
   getJoinedGames(userAddress: String!): [Game!]!
   getMessagesByGame(gameId: String!, userAddress: String!): [Message!]!
@@ -67,6 +121,13 @@ type Query {
 
 type Subscription {
   newMessage(gameId: String!): Message!
+  newStatus(gameId: String!): GameEvent!
+}
+
+input UpdateAiAgentInput {
+  address: String
+  context: String
+  name: String
 }
 
 """User"""

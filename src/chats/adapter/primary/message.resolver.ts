@@ -12,7 +12,7 @@ export class MessageResolver {
   private pubSub: PubSub;
 
   constructor(private readonly messageService: MessageService, private readonly userService: UserService, private readonly gameService: GameService) {
-    this.pubSub = this.messageService.getPubSub(); // PubSub 인스턴스를 가져옴
+    this.pubSub = this.messageService.getPubSub();
   }
 
   @Query(() => [Message])
