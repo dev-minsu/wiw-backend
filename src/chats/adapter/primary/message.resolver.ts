@@ -39,6 +39,11 @@ export class MessageResolver {
     return this.gameService.sendMessage(gameId, senderAddress, content, messageType);
   }
 
+  @Mutation(() => Boolean)
+  async deleteAllMessagesInGame(@Args('gameId') gameId: string): Promise<boolean> {
+    return await this.messageService.deleteAllMessagesInGame(gameId);
+  }
+
   @Subscription(() => Message, {
     filter: (payload, variables) => payload.newMessage.gameId === variables.gameId,
   })

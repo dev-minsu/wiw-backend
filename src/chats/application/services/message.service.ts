@@ -33,6 +33,11 @@ export class MessageService {
     return this.messageModel.find({ gameId }).sort({ createdAt: 1 }).exec();
   }
 
+  async deleteAllMessagesInGame(gameId: string): Promise<boolean> {
+    const result = await this.messageModel.deleteMany({ gameId }).exec();
+    return result.deletedCount > 0;
+  }
+
   getPubSub() {
     return this.pubSub;
   }

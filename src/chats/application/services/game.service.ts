@@ -1,4 +1,4 @@
-import {BadRequestException, forwardRef, Inject, Injectable, Logger, NotFoundException} from "@nestjs/common";
+import {BadRequestException, Injectable, Logger, NotFoundException} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model, Types} from "mongoose";
 import {Game, GameDocument} from "../../domain/models/game.model";
@@ -8,7 +8,7 @@ import {Message} from "../../domain/models/message.model";
 import {PubSub} from "graphql-subscriptions";
 import {BettingService} from "./betting.service";
 import {CreateBettingInput} from "../../domain/dto/create-betting.input";
-import {Betting, BettingDocument} from "../../domain/models/betting.model";
+import {Betting} from "../../domain/models/betting.model";
 
 @Injectable()
 export class GameService {
@@ -50,6 +50,15 @@ export class GameService {
     return betting;
   }
 
+  async deleteAllBettings(gameId: string): Promise<void> {
+    const game = await this.findGameById(gameId);
+    if (!game) {
+      throw new NotFoundException('Game not found.');
+    }
+    await this.bettingService.deleteByIds(game.bettingIds)
+    await this.removeAllBettingIds(gameId)
+  }
+
   async broadcastEvent(gameId: string, event: string): Promise<void> {
     const game = await this.findGameById(gameId);
     if (!game) {
@@ -58,14 +67,18 @@ export class GameService {
     await this.pubSub.publish(`${gameId}`, {newStatus: {event, game}});
   }
 
-  async updateWinnerAiAgent(gameId: string, aiAgentId: string): Promise<Game> {
-    const game = await this.gameModel.findById(gameId);
+  async updateWinnerAiAgent(gameId: string, aiAgentId: string): Promise<void> {
+    let game = await this.gameModel.findById(gameId);
     if (!game) {
       throw new NotFoundException('Game not found.');
     }
 
     if (!game.aiAgentIds.includes(aiAgentId)) {
       throw new BadRequestException('Invalid winner AI Agent ID.');
+    }
+
+    if (game.bettingIds.length != game.userAddresses.length) {
+      throw new BadRequestException('Betting is not complete to all user');
     }
 
     const bettings = await this.bettingService.findByIds(game.bettingIds);
@@ -81,9 +94,9 @@ export class GameService {
     game.winnerAiAgentId = aiAgentId;
     await game.save();
 
-    await this.pubSub.publish(`${gameId}`, { event: "update-winner-ai-agent", game });
+    game = await this.gameModel.findById(gameId);
 
-    return game;
+    await this.pubSub.publish(`${gameId}`, { event: "update-winner-ai-agent", game });
   }
 
   async findGameById(gameId: string): Promise<Game | null> {
@@ -102,6 +115,17 @@ export class GameService {
       { new: true }
     );
 
+    if (!game) {
+      throw new NotFoundException('Game not found.');
+    }
+  }
+
+  async removeAllBettingIds(gameId: string): Promise<void> {
+    const game = await this.gameModel.findByIdAndUpdate(
+      gameId,
+      { $set: { bettingIds: [] } },
+      { new: true }
+    );
     if (!game) {
       throw new NotFoundException('Game not found.');
     }

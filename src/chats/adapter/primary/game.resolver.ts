@@ -30,7 +30,6 @@ export class GameResolver {
     return this.gameService.create(createGameInput);
   }
 
-
   @Mutation(() => Game)
   async joinGame(@Args('userAddress') address: string, @Args('gameId') gameId: string): Promise<Game> {
     return this.gameService.joinGame(address, gameId);
@@ -42,9 +41,21 @@ export class GameResolver {
   }
 
   @Mutation(() => Boolean)
+  async deleteAllBettingsInGame(@Args('gameId') gameId: string): Promise<boolean> {
+    this.gameService.deleteAllBettings(gameId);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
   async broadcastEvent(@Args('gameId') gameId: string, @Args('event') event: string): Promise<boolean> {
     await this.gameService.broadcastEvent(gameId, event);
     return true
+  }
+
+  @Mutation(() => Boolean)
+  async updateWinnerAiAgent(@Args('gameId') gameId: string, @Args('aiAgentId') aiAgentId: string): Promise<boolean> {
+    await this.gameService.updateWinnerAiAgent(gameId, aiAgentId);
+    return true;
   }
 
   @Query(() => Game)

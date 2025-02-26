@@ -27,8 +27,8 @@ export class AiAgentService {
   async updateAiAgent(aiAgentId: string, updateAiAgentInput: UpdateAiAgentInput): Promise<AiAgent> {
     const updatedAiAgent = await this.aiAgentModel.findByIdAndUpdate(
       aiAgentId,
-      { $set: updateAiAgentInput }, // ✅ 입력된 값만 업데이트
-      { new: true, omitUndefined: true } // ✅ 업데이트 후 최신 데이터 반환 & undefined 값 무시
+      { $set: updateAiAgentInput },
+      { new: true, omitUndefined: true }
     );
 
     if (!updatedAiAgent) {

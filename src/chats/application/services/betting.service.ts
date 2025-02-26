@@ -32,4 +32,9 @@ export class BettingService {
       {new: true}
     );
   }
+
+  async deleteByIds(ids: string[]): Promise<boolean> {
+    const result = await this.bettingModel.deleteMany({ _id: { $in: ids } }).exec();
+    return result.deletedCount > 0;
+  }
 }

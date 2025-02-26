@@ -104,9 +104,12 @@ type Mutation {
   createBetting(createBettingInput: CreateBettingInput!, gameId: String!): Betting!
   createGame(createGameInput: CreateGameInput!): Game!
   createUser(createUserInput: CreateUserInput!): User!
+  deleteAllBettingsInGame(gameId: String!): Boolean!
+  deleteAllMessagesInGame(gameId: String!): Boolean!
   joinGame(gameId: String!, userAddress: String!): Game!
   sendMessage(content: String!, gameId: String!, messageType: String!, senderAddress: String!): Message!
   updateAiAgent(aiAgentId: String!, updateAiAgentInput: UpdateAiAgentInput!): AiAgent!
+  updateWinnerAiAgent(aiAgentId: String!, gameId: String!): Boolean!
 }
 
 type Query {
